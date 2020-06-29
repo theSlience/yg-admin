@@ -4,7 +4,7 @@
  * @Author: sueRimn
  * @Date: 2020-05-12 09:16:42
  * @LastEditors: sueRimn
- * @LastEditTime: 2020-06-28 15:54:55
+ * @LastEditTime: 2020-06-22 15:57:30
  -->
 <template>
   <div>
@@ -25,20 +25,19 @@
         <el-row>
           <el-col>
             <template>
-              <el-table :data="news"
+              <el-table :data="banner"
                         style="width:100%"
                         stripe>
-                <el-table-column prop="addtime"
-                                 label="添加时间"></el-table-column>
-                <el-table-column prop="newsTitle"
+                <el-table-column prop="bannerTitle"
                                  label="标题"></el-table-column>
-                <el-table-column prop="newsContent"
-                                 label="内容">
+                <el-table-column prop="bannerUrl"
+                                 label="跳转地址"></el-table-column>
+                <el-table-column prop="bannerType"
+                                 label="使用设备">
                   <template slot-scope="scope">
-                    <!--v-html:将后端返回的带标签的内容解析成html页面形式的内容-->
-                    <div v-html="scope.row.newsContent"
-                         class="newsContent">
-                    </div>
+                    <el-tag>
+                      {{scope.row.bannerType | bannerType}}
+                    </el-tag>
                   </template>
                 </el-table-column>
                 <el-table-column label="图片">
@@ -46,30 +45,28 @@
                     <img :src="scope.row.img"
                          style="width: 100px;height:50px"></template>
                 </el-table-column>
-                <el-table-column prop="newsScource"
-                                 label="新闻来源">
+                <el-table-column prop="bannerFlag"
+                                 label="是否可用">
                   <template slot-scope="scope">
-                    <!--三目运算符判断对应新闻类型-->
-                    <el-tag>{{scope.row.newsScource}}</el-tag>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="newsType"
-                                 label="新闻类型">
-                  <template slot-scope="scope">
-                    <!--三目运算符判断对应新闻类型-->
-                    <el-tag>{{scope.row.newsType | newsType}}</el-tag>
+                    <el-switch v-model="scope.row.bannerFlag"
+                               active-value="true"
+                               inactive-value="false"
+                               active-color="#13ce66"
+                               inactive-color="#ff4949"
+                               @change="changeSwitch($event,scope.row,scope.$index)">
+                    </el-switch>
                   </template>
                 </el-table-column>
                 <el-table-column label="操作">
-                  <template slot-scope="news">
+                  <template slot-scope="banner">
                     <div style="display:flex;">
                       <el-button icon="el-icon-edit"
                                  size="medium"
-                                 @click="handleEdit(news.$index,news.row)">编辑</el-button>
+                                 @click="handleEdit(banner.$index,banner.row)">编辑</el-button>
                       <el-button type="danger"
                                  size="medium"
                                  icon="el-icon-delete"
-                                 @click.native.prevent="handleDelete(news.row.newsId)">删除</el-button>
+                                 @click.native.prevent="handleDelete(banner.row.bannerId)">删除</el-button>
                     </div>
                   </template>
                 </el-table-column>
@@ -86,69 +83,56 @@
                        @current-change="currentChange">
         </el-pagination>
         <!-- 添加新闻模态框 -->
-        <el-dialog title="添加新闻"
+        <el-dialog title="添加轮播图"
                    :visible.sync="dialogVisible"
                    width="80%">
-          <el-form ref="newsForm"
-                   :model="newsForm"
+          <el-form ref="bannerForm"
+                   :model="bannerForm"
                    enctype="multipart/form-data">
             <el-form-item label="标题"
-                          prop="newsTitle">
-              <el-input v-model="newsForm.newsTitle"
+                          prop="bannerTitle">
+              <el-input v-model="bannerForm.bannerTitle"
                         autocomplete="off"></el-input>
             </el-form-item>
-
-            <el-form-item label="内容"
-                          prop="newsContent">
-              <quill-editor ref="text"
-                            v-model="newsForm.newsContent"
-                            class="myQuillEditor"
-                            :options="editorOption" />
+            <el-form-item label="跳转地址"
+                          prop="bannerUrl">
+              <el-input v-model="bannerForm.bannerUrl"
+                        autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="使用设备"
+                          prop="bannerType">
+              <el-radio-group v-model="bannerForm.bannerType">
+                <div style="display:flex;">
+                  <el-radio border
+                            v-for="item in bannerTypeOptions"
+                            :key="item.bannerType"
+                            :label="item.bannerType">{{item.Text}}</el-radio>
+                </div>
+              </el-radio-group>
             </el-form-item>
             <el-form-item label="图片"
                           prop="file"
                           type="file">
               <el-upload class="avatar-uploader"
-                         action="/api/news/postNews"
+                         action="/api/banner/postBanner"
                          :auto-upload="false"
                          ref="upload"
-                         :data="newsForm"
+                         :data="bannerForm"
                          :on-success="handleAvatarUpload"
                          :before-upload="beforeAvatarUpload">
-                <img v-if="newsForm.imgUrl"
-                     :src="newsForm.imgUrl"
+                <img v-if="bannerForm.imgUrl"
+                     :src="bannerForm.imgUrl"
                      class="avatar">
                 <i v-else
                    class="el-icon-plus avatar-uploader-icon"></i>
               </el-upload>
             </el-form-item>
-            <el-form-item label="新闻来源"
-                          prop="newsScource">
-              <el-radio-group v-model="newsForm.newsScource">
-                <div style="display:flex;">
-                  <el-radio border
-                            v-for="item in newsScourceOptions"
-                            :key="item.Text"
-                            :label="item.Text">{{item.Text}}</el-radio>
-                </div>
-              </el-radio-group>
-            </el-form-item>
-            <el-form-item label="新闻类型"
-                          prop="newsType">
-              <el-radio-group v-model="newsForm.newsType">
-                <div style="display:flex;">
-                  <el-radio border
-                            v-for="item in newsTypeOptions"
-                            :key="item.newsType"
-                            :label="item.newsType">{{item.Text}}</el-radio>
-                </div>
-              </el-radio-group>
-            </el-form-item>
+
           </el-form>
           <span slot="footer">
             <el-button @click="dialogVisible=false">取消</el-button>
             <el-button type="primary"
-                       @click="submitForm('newsForm')">确定</el-button>
+                       @click="submitForm('bannerForm')">确定</el-button>
           </span>
         </el-dialog>
         <!-- 编辑新闻模态框 -->
@@ -158,24 +142,33 @@
                    width="80%">
           <el-form :model="editForm"
                    ref="editForm">
-            <el-form-item prop="newsId"></el-form-item>
+            <el-form-item prop="bannerId"></el-form-item>
             <el-form-item label="标题"
-                          prop="newsTitle">
-              <el-input v-model="editForm.newsTitle"
+                          prop="bannerTitle">
+              <el-input v-model="editForm.bannerTitle"
                         autocomplete="off"></el-input>
             </el-form-item>
-            <el-form-item label="内容"
-                          prop="newsContent">
-              <quill-editor ref="text"
-                            v-model="editForm.newsContent"
-                            class="myQuillEditor"
-                            :options="editorOption" />
+            <el-form-item label="跳转地址"
+                          prop="bannerUrl">
+              <el-input v-model="editForm.bannerUrl"
+                        autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="使用设备"
+                          prop="bannerType">
+              <el-radio-group v-model="editForm.bannerType">
+                <div style="display:flex;">
+                  <el-radio border
+                            v-for="item in bannerTypeOptions"
+                            :key="item.bannerType"
+                            :label="item.bannerType">{{item.Text}}</el-radio>
+                </div>
+              </el-radio-group>
             </el-form-item>
             <el-form-item label="图片"
                           prop="file"
                           type="file">
               <el-upload class="avatar-uploader"
-                         action="/api/news/putNewsById"
+                         action="/api/banner/putBannerById"
                          :auto-upload="false"
                          ref="upload"
                          :data="editForm"
@@ -187,28 +180,6 @@
                 <i v-else
                    class="el-icon-plus avatar-uploader-icon"></i>
               </el-upload>
-            </el-form-item>
-            <el-form-item label="新闻来源"
-                          prop="newsScource">
-              <el-radio-group v-model="editForm.newsScource">
-                <div style="display:flex;">
-                  <el-radio border
-                            v-for="item in newsScourceOptions"
-                            :key="item.Text"
-                            :label="item.Text">{{item.Text}}</el-radio>
-                </div>
-              </el-radio-group>
-            </el-form-item>
-            <el-form-item label="新闻类型"
-                          prop="newsType">
-              <el-radio-group v-model="editForm.newsType">
-                <div style="display:flex;">
-                  <el-radio border
-                            v-for="item in newsTypeOptions"
-                            :key="item.newsType"
-                            :label="item.newsType">{{item.Text}}</el-radio>
-                </div>
-              </el-radio-group>
             </el-form-item>
           </el-form>
           <span slot="footer">
@@ -231,34 +202,29 @@ import myHeader from '../../components/header'
 export default {
   data() {
     return {
+      form: {
+        bannerType: ''
+      },
       dialogVisible: false,
       editFormVisible: false,
-      news: [],
+      banner: [],
       img: '',
       imgUrl: '',
       editorOption: {},
-      newsForm: {
-        newsTitle: '',
-        newsContent: '',
-        newsScource: '',
-        newsType: ''
+      bannerForm: {
+        bannerTitle: '',
+        bannerUrl: '',
+        bannerType: ''
       },
       // 编辑模态框
       editForm: {
-        newsTitle: '',
-        newsContent: '',
+        bannerTitle: '',
+        bannerUrl: '',
+        bannerType: ''
       },
-      newsScourceOptions: [
-        { Text: '剑桥英语' },
-        { Text: '高铁专业' },
-        { Text: '护理专业' },
-        { Text: '幼儿教育' }
-      ],
-      newsTypeOptions: [
-        { newsType: 1, Text: '行业资讯' },
-        { newsType: 2, Text: '招生解答' },
-        { newsType: 3, Text: '校园动态' },
-        { newsType: 4, Text: '通知动态' }
+      bannerTypeOptions: [
+        { bannerType: 1, Text: '电脑端' },
+        { bannerType: 2, Text: '移动端' }
       ],
       // 分页数据
       page: {
@@ -275,7 +241,7 @@ export default {
   },
   //   页面初始化需要进行数据渲染
   mounted() {
-    this.getNews()
+    this.getBanners()
   },
   methods: {
     // 点击添加新闻按钮打开模态框
@@ -283,24 +249,25 @@ export default {
       this.dialogVisible = true
     },
     // 获取后台新闻数据
-    getNews() {
+    getBanners() {
       this.$axios
-        .get('/api/news/getAllNews/' + this.page.pageNum)
+        .get('/api/banner/getAllBanner/' + this.page.pageNum)
         .then(res => {
           if (res.data.uAuth === 'true') {
             this.$message.error('您已退出登陆，请重新登陆')
             return this.$router.push('/login')
           }
-          console.log(res)
-          this.news = res.data.data.list
-          this.page.total = res.data.data.total
+          console.log(JSON.parse(res.data.data).list)
+          this.banner = JSON.parse(res.data.data).list
+          this.page.total = JSON.parse(res.data.data).total
         })
         .catch(err => {})
     },
     currentChange(pageNum) {
       this.page.pageNum = pageNum
-      this.getNews()
+      this.getBanners()
     },
+
     submitForm(formName) {
       let vm = this
       // 表单登录之前的预验证
@@ -310,7 +277,7 @@ export default {
           vm.$refs.upload.submit()
           this.$message.success('添加成功')
           this.dialogVisible = false
-          this.getNews()
+          this.getBanners()
         } else {
           return false
         }
@@ -325,10 +292,14 @@ export default {
         this.$message.error('上传新闻图片大小不能超过 4MB!')
       }
       return isLt4M
+      this.$axios
+        .put('/api/banner/putBannerById', { file: file })
+        .then(res => {})
+        .catch(err => {})
     },
     // 删除操作
-    //根据newsId删除新闻
-    async handleDelete(newsId) {
+    //根据bannerId删除新闻
+    async handleDelete(bannerId) {
       const confirmResult = await this.$confirm('是否删除此条新闻？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -340,14 +311,14 @@ export default {
         return this.$message.info('已取消删除')
       }
       const { data: res } = await this.$axios
-        .delete('/api/news/deleteNewsById/' + newsId)
+        .delete('/api/banner/deleteBannerById/' + bannerId)
         .then(res => {
           if (this.success == true) {
             return this.$message.error('删除用户失败')
           }
           this.$message.success('删除用户成功')
           // 刷新列表
-          this.getNews()
+          this.getBanners()
         })
     },
     // 编辑按钮
@@ -363,12 +334,10 @@ export default {
     handleUpdate(formName) {
       // 定义数据
       let data = {
-        newsId: this.editForm.newsId,
-        newsTitle: this.editForm.newsTitle,
-        newsContent: this.editForm.newsContent,
-        file: this.editForm.file,
-        newsScource:this.editForm.newsScource,
-        newsType:this.editForm.newsType
+        bannerId: this.editForm.bannerId,
+        bannerTitle: this.editForm.bannerTitle,
+        bannerContent: this.editForm.bannerContent,
+        file: this.editForm.file
       }
       let vm = this
       this.$refs[formName].validate(valid => {
@@ -376,34 +345,37 @@ export default {
           vm.$refs.upload.submit()
           this.$message.success('编辑成功')
           this.editFormVisible = false
-          this.getNews()
+          this.getBanners()
         } else {
           return false
         }
       })
+    },
+    changeSwitch(data, b, index) {
+      console.log(b.bannerId)
+      console.log(data)
+      console.log(index)
+      let form = { bannerType: this.data }
+      this.$axios
+        .put(`/api/banner/putBannerFlagById/${b.bannerId}/${data}`)
+        .then(res => {
+          console.log(res)
+        })
     }
   },
   filters: {
-    newsScource(value) {
+    bannerType(value) {
       if (value === 1) {
-        return '剑桥英语'
+        return '电脑端'
       } else if (value === 2) {
-        return '高铁专业'
-      } else if (value === 3) {
-        return '护理专业'
-      } else if (value === 4) {
-        return '幼儿教育'
+        return '移动端'
       }
     },
-    newsType(value) {
-      if (value === 1) {
-        return '行业资讯'
-      } else if (value === 2) {
-        return '招生解答'
-      } else if (value === 3) {
-        return '校园动态'
-      } else if (value === 4) {
-        return '通知动态'
+    bannerFlag(value) {
+      if (value == 'true') {
+        return true
+      } else if (value == 'false') {
+        return false
       }
     }
   }
@@ -414,7 +386,7 @@ export default {
   display: flex;
 }
 .content {
-  width: 1400px;
+  width: 1300px;
   height: 100%;
   margin: 0 auto;
 }
@@ -423,12 +395,6 @@ export default {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-.newsContent {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  display: -webkit-inline-box;
 }
 .el-table--enable-row-transition .el-table__body td {
   text-align: center;

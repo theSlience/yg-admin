@@ -15,7 +15,7 @@ module.exports = {
     proxyTable: {
       "/api/": {
         // 调用的接口域名和端口号
-        target: "http://192.168.1.106:8900",
+        target: "http://192.168.1.106:8012",
         // 表示实现跨域
         changeOrigin: true,
         pathRewrite: {

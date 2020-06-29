@@ -1,37 +1,37 @@
 <template>
   <div id="login">
     <div class="loginToHome">
-      <el-form ref="loginForm"
-               :model="loginForm"
+      <el-form ref="userEntity"
+               :model="userEntity"
                :rules="ruleForm"
                status-icon
                label-width="80px"
-               class="loginForm">
+               class="userEntity">
         <h3>登陆</h3>
         <el-form-item label="用户名"
                       prop="userName">
           <el-input type="text"
-                    v-model="loginForm.userName"
+                    v-model="userEntity.userName"
                     auto-complete="off"
                     placeholder="请输入用户名"></el-input>
         </el-form-item>
         <el-form-item label="密码"
                       prop="userPwd">
           <el-input type="password"
-                    v-model="loginForm.userPwd"
+                    v-model="userEntity.userPwd"
                     auto-complete="off"
                     placeholder="请输入密码"></el-input>
         </el-form-item>
         <el-form-item>
-        <el-button class="homeBut"
+          <el-button class="homeBut"
                      type="primary"
                      plain
-                     @click="login(loginForm)"
-                     :loading="logining">登录</el-button>
+                     @click="resetForm()"
+                     :loading="logining">重置</el-button>
           <el-button class="loginBut"
                      type="primary"
                      plain
-                     @click="resetForm()">重置</el-button>
+                     @click="login(userEntity)">登录</el-button>
         </el-form-item>
       </el-form>
 
@@ -45,7 +45,7 @@ export default {
   data() {
     return {
       logining: false,
-      loginForm: {
+      userEntity: {
         userName: '',
         userPwd: ''
       },
@@ -56,18 +56,18 @@ export default {
     }
   },
   methods: {
-    login(loginForm) {
+    login(userEntity) {
       const that = this
       this.$axios
-        .post('/api/user/login', loginForm)
+        .post('/api/user/login', userEntity)
         .then(res => {
-          if (res.data.success === 'true') {
+          if (res.data.code == 200) {
             console.log(res)
             // window.sessionStorage.setItem('token', res.data.token)
             this.$message.success('登陆成功')
-            return that.$router.push('/news')
+            return that.$router.push('/course')
           } else {
-            return this.$message.error('登陆失败')    
+            return this.$message.error('登陆失败')
           }
           //   this.news = res.data.list
         })
@@ -94,7 +94,7 @@ export default {
   background: #fff;
   border: 1px solid #dcdfe6;
 }
-.loginForm {
+.userEntity {
   text-align: center;
   padding-top: 15px;
   padding-right: 30px;

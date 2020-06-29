@@ -4,7 +4,7 @@
  * @Author: sueRimn
  * @Date: 2020-05-12 09:16:42
  * @LastEditors: sueRimn
- * @LastEditTime: 2020-06-28 15:54:55
+ * @LastEditTime: 2020-06-28 14:47:02
  -->
 <template>
   <div>
@@ -15,7 +15,7 @@
           <el-col :span="16">
             <el-button @click="opendialogVisible()"
                        icon="el-icon-plus">
-              添加新闻
+              添加课程
             </el-button>
             <!--
             <el-button :span="8">批量删除</el-button>
@@ -25,51 +25,56 @@
         <el-row>
           <el-col>
             <template>
-              <el-table :data="news"
+              <el-table :data="zsjz"
                         style="width:100%"
                         stripe>
-                <el-table-column prop="addtime"
-                                 label="添加时间"></el-table-column>
-                <el-table-column prop="newsTitle"
-                                 label="标题"></el-table-column>
-                <el-table-column prop="newsContent"
-                                 label="内容">
-                  <template slot-scope="scope">
-                    <!--v-html:将后端返回的带标签的内容解析成html页面形式的内容-->
-                    <div v-html="scope.row.newsContent"
-                         class="newsContent">
+                <el-table-column prop="zsjzTitle"
+                                 label="课程名称"></el-table-column>
+                <el-table-column prop="zsjzSummary"
+                                 label="课程摘要"></el-table-column>
+                <el-table-column prop="zsjzContent"
+                                 label="专业介绍">
+                  <!-- <template slot-scope="scope">
+                    <div v-html="scope.row.zsjzContent">
                     </div>
-                  </template>
+                  </template> -->
                 </el-table-column>
+                <el-table-column prop="zsjzClass"
+                                 label="学习课程"></el-table-column>
+                <el-table-column prop="zsjzJob"
+                                 label="就业方向"></el-table-column>
+                <el-table-column prop="enCount"
+                                 label="报名人数"></el-table-column>
+                <el-table-column prop="endTime"
+                                 label="截止日期"></el-table-column>
+                <el-table-column prop="zsjzA"
+                                 label="左图标"></el-table-column>
+                <el-table-column prop="zsjzB"
+                                 label="中图标"></el-table-column>
+                <el-table-column prop="zsjzC"
+                                 label="右图标"></el-table-column>
                 <el-table-column label="图片">
                   <template slot-scope="scope">
                     <img :src="scope.row.img"
                          style="width: 100px;height:50px"></template>
                 </el-table-column>
-                <el-table-column prop="newsScource"
-                                 label="新闻来源">
+                <el-table-column prop="zsjzType"
+                                 label="类型">
                   <template slot-scope="scope">
                     <!--三目运算符判断对应新闻类型-->
-                    <el-tag>{{scope.row.newsScource}}</el-tag>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="newsType"
-                                 label="新闻类型">
-                  <template slot-scope="scope">
-                    <!--三目运算符判断对应新闻类型-->
-                    <el-tag>{{scope.row.newsType | newsType}}</el-tag>
+                    <el-tag>{{scope.row.zsjzType | zsjzType}}</el-tag>
                   </template>
                 </el-table-column>
                 <el-table-column label="操作">
-                  <template slot-scope="news">
-                    <div style="display:flex;">
+                  <template slot-scope="zsjz">
+                    <div style="display:block;">
                       <el-button icon="el-icon-edit"
                                  size="medium"
-                                 @click="handleEdit(news.$index,news.row)">编辑</el-button>
+                                 @click="handleEdit(zsjz.$index,zsjz.row)">编辑</el-button>
                       <el-button type="danger"
                                  size="medium"
                                  icon="el-icon-delete"
-                                 @click.native.prevent="handleDelete(news.row.newsId)">删除</el-button>
+                                 @click.native.prevent="handleDelete(zsjz.row.zsjzId)">删除</el-button>
                     </div>
                   </template>
                 </el-table-column>
@@ -86,61 +91,101 @@
                        @current-change="currentChange">
         </el-pagination>
         <!-- 添加新闻模态框 -->
-        <el-dialog title="添加新闻"
+        <el-dialog title="添加课程"
                    :visible.sync="dialogVisible"
                    width="80%">
-          <el-form ref="newsForm"
-                   :model="newsForm"
+          <el-form ref="zsjzForm"
+                   :model="zsjzForm"
                    enctype="multipart/form-data">
-            <el-form-item label="标题"
-                          prop="newsTitle">
-              <el-input v-model="newsForm.newsTitle"
+            <el-form-item label="课程名称"
+                          prop="zszjTitle">
+              <el-input v-model="zsjzForm.zsjzTitle"
                         autocomplete="off"></el-input>
             </el-form-item>
-
-            <el-form-item label="内容"
-                          prop="newsContent">
-              <quill-editor ref="text"
-                            v-model="newsForm.newsContent"
-                            class="myQuillEditor"
-                            :options="editorOption" />
+            <el-form-item label="课程摘要"
+                          prop="zsjzSummary">
+              <el-input v-model="zsjzForm.zsjzSummary"
+                        autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="专业介绍"
+                          prop="zsjzContent">
+              <el-input v-model="zsjzForm.zsjzContent"
+                        autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="学习课程"
+                          prop="zsjzClass">
+              <el-input v-model="zsjzForm.zsjzClass"
+                        autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="就业方向"
+                          prop="zsjzJob">
+              <el-input v-model="zsjzForm.zsjzJob"
+                        autocomplete="off"></el-input>
+            </el-form-item>
+            <!-- <el-form-item label="报名人数"
+                          prop="enCount">
+              <el-input v-model="zsjzForm.enCount"
+                        autocomplete="off"></el-input>
+            </el-form-item> -->
+            <el-form-item label="截止日期"
+                          prop="endTime">
+              <el-date-picker v-model="zsjzForm.endTime"
+                              placeholder="选择截止日期"></el-date-picker>
+            </el-form-item>
+            <el-form-item label="左图标描述"
+                          prop="zsjzA">
+              <el-input v-model="zsjzForm.zsjzA"
+                        autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="中图标描述"
+                          prop="zsjzB">
+              <el-input v-model="zsjzForm.zsjzB"
+                        autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="右图标描述"
+                          prop="zsjzC">
+              <el-input v-model="zsjzForm.zsjzC"
+                        autocomplete="off"></el-input>
             </el-form-item>
             <el-form-item label="图片"
                           prop="file"
                           type="file">
               <el-upload class="avatar-uploader"
-                         action="/api/news/postNews"
+                         action="/api/zsjz/postZsjz"
                          :auto-upload="false"
                          ref="upload"
-                         :data="newsForm"
+                         :limit="4"
+                         :data="zsjzForm"
                          :on-success="handleAvatarUpload"
                          :before-upload="beforeAvatarUpload">
-                <img v-if="newsForm.imgUrl"
-                     :src="newsForm.imgUrl"
+                <img v-if="zsjzForm.imgUrl"
+                     :src="zsjzForm.imgUrl"
                      class="avatar">
                 <i v-else
                    class="el-icon-plus avatar-uploader-icon"></i>
               </el-upload>
+              <!-- <el-upload class="upload-demo"
+                         action="/api/zsjz/postZsjz"
+                         :on-preview="handlePreview"
+                         :on-remove="handleRemove"
+                         :before-remove="beforeRemove"
+                         multiple
+                         :limit="4"
+                         :on-exceed="handleExceed"
+                         :file-list="fileList">
+                <el-button size="small"
+                           type="primary">点击上传</el-button>
+
+              </el-upload> -->
             </el-form-item>
-            <el-form-item label="新闻来源"
-                          prop="newsScource">
-              <el-radio-group v-model="newsForm.newsScource">
-                <div style="display:flex;">
+            <el-form-item label="类型"
+                          prop="zsjzType">
+              <el-radio-group v-model="zsjzForm.zsjzType">
+                <div style="display:flex;flex-wrap: wrap;">
                   <el-radio border
-                            v-for="item in newsScourceOptions"
-                            :key="item.Text"
-                            :label="item.Text">{{item.Text}}</el-radio>
-                </div>
-              </el-radio-group>
-            </el-form-item>
-            <el-form-item label="新闻类型"
-                          prop="newsType">
-              <el-radio-group v-model="newsForm.newsType">
-                <div style="display:flex;">
-                  <el-radio border
-                            v-for="item in newsTypeOptions"
-                            :key="item.newsType"
-                            :label="item.newsType">{{item.Text}}</el-radio>
+                            v-for="item in zsjzTypeOptions"
+                            :key="item.zsjzType"
+                            :label="item.zsjzType">{{item.Text}}</el-radio>
                 </div>
               </el-radio-group>
             </el-form-item>
@@ -148,7 +193,7 @@
           <span slot="footer">
             <el-button @click="dialogVisible=false">取消</el-button>
             <el-button type="primary"
-                       @click="submitForm('newsForm')">确定</el-button>
+                       @click="submitForm('zsjzForm')">确定</el-button>
           </span>
         </el-dialog>
         <!-- 编辑新闻模态框 -->
@@ -158,24 +203,29 @@
                    width="80%">
           <el-form :model="editForm"
                    ref="editForm">
-            <el-form-item prop="newsId"></el-form-item>
+            <el-form-item prop="zsjzId"></el-form-item>
             <el-form-item label="标题"
-                          prop="newsTitle">
-              <el-input v-model="editForm.newsTitle"
+                          prop="zsjzTitle">
+              <el-input v-model="editForm.zsjzTitle"
                         autocomplete="off"></el-input>
             </el-form-item>
             <el-form-item label="内容"
-                          prop="newsContent">
+                          prop="zsjzContent">
               <quill-editor ref="text"
-                            v-model="editForm.newsContent"
+                            v-model="editForm.zsjzContent"
                             class="myQuillEditor"
                             :options="editorOption" />
+              <!--
+              <el-input v-model="editForm.zsjzContent"
+                        autocomplete="off"
+                        type="textarea"></el-input>
+                -->
             </el-form-item>
             <el-form-item label="图片"
                           prop="file"
                           type="file">
               <el-upload class="avatar-uploader"
-                         action="/api/news/putNewsById"
+                         action="/api/zsjz/update"
                          :auto-upload="false"
                          ref="upload"
                          :data="editForm"
@@ -187,28 +237,6 @@
                 <i v-else
                    class="el-icon-plus avatar-uploader-icon"></i>
               </el-upload>
-            </el-form-item>
-            <el-form-item label="新闻来源"
-                          prop="newsScource">
-              <el-radio-group v-model="editForm.newsScource">
-                <div style="display:flex;">
-                  <el-radio border
-                            v-for="item in newsScourceOptions"
-                            :key="item.Text"
-                            :label="item.Text">{{item.Text}}</el-radio>
-                </div>
-              </el-radio-group>
-            </el-form-item>
-            <el-form-item label="新闻类型"
-                          prop="newsType">
-              <el-radio-group v-model="editForm.newsType">
-                <div style="display:flex;">
-                  <el-radio border
-                            v-for="item in newsTypeOptions"
-                            :key="item.newsType"
-                            :label="item.newsType">{{item.Text}}</el-radio>
-                </div>
-              </el-radio-group>
             </el-form-item>
           </el-form>
           <span slot="footer">
@@ -233,32 +261,38 @@ export default {
     return {
       dialogVisible: false,
       editFormVisible: false,
-      news: [],
+      zsjz: [],
       img: '',
       imgUrl: '',
       editorOption: {},
-      newsForm: {
-        newsTitle: '',
-        newsContent: '',
-        newsScource: '',
-        newsType: ''
+      zsjzForm: {
+        zsjzTitle: '',
+        zsjzContent: '',
+        zsjzType: '',
+        zsjzA: '',
+        zsjzB: '',
+        zsjzC: '',
+        zsjzJob: '',
+        enCount: '',
+        zsjzSummary: '',
+        endTime: ''
       },
       // 编辑模态框
       editForm: {
-        newsTitle: '',
-        newsContent: '',
+        zsjzTitle: '',
+        zsjzContent: ''
       },
-      newsScourceOptions: [
-        { Text: '剑桥英语' },
-        { Text: '高铁专业' },
-        { Text: '护理专业' },
-        { Text: '幼儿教育' }
-      ],
-      newsTypeOptions: [
-        { newsType: 1, Text: '行业资讯' },
-        { newsType: 2, Text: '招生解答' },
-        { newsType: 3, Text: '校园动态' },
-        { newsType: 4, Text: '通知动态' }
+      zsjzTypeOptions: [
+        { zsjzType: 1, Text: '护理专业' },
+        { zsjzType: 2, Text: '幼儿教育' },
+        { zsjzType: 3, Text: '计算机应用' },
+        { zsjzType: 4, Text: '高铁专业' },
+        { zsjzType: 5, Text: '航空服务' },
+        { zsjzType: 6, Text: '会计' },
+        { zsjzType: 7, Text: '汽车维修' },
+        { zsjzType: 8, Text: '电子商务' },
+        { zsjzType: 9, Text: '电气自动化' },
+        { zsjzType: 10, Text: '数控加工' }
       ],
       // 分页数据
       page: {
@@ -275,7 +309,7 @@ export default {
   },
   //   页面初始化需要进行数据渲染
   mounted() {
-    this.getNews()
+    this.getzsjz()
   },
   methods: {
     // 点击添加新闻按钮打开模态框
@@ -283,23 +317,23 @@ export default {
       this.dialogVisible = true
     },
     // 获取后台新闻数据
-    getNews() {
+    getzsjz() {
       this.$axios
-        .get('/api/news/getAllNews/' + this.page.pageNum)
+        .get('/api/zsjz/getAllZsjz/' + this.page.pageNum)
         .then(res => {
           if (res.data.uAuth === 'true') {
             this.$message.error('您已退出登陆，请重新登陆')
             return this.$router.push('/login')
           }
-          console.log(res)
-          this.news = res.data.data.list
+          console.log(res.data.data.list)
+          this.zsjz = res.data.data.list
           this.page.total = res.data.data.total
         })
         .catch(err => {})
     },
     currentChange(pageNum) {
       this.page.pageNum = pageNum
-      this.getNews()
+      this.getzsjz()
     },
     submitForm(formName) {
       let vm = this
@@ -310,13 +344,16 @@ export default {
           vm.$refs.upload.submit()
           this.$message.success('添加成功')
           this.dialogVisible = false
-          this.getNews()
+          this.getzsjz()
         } else {
           return false
         }
       })
     },
     handleAvatarUpload(res, file) {
+      this.imgUrl = res.push(this.imgUrl)
+      console.log(res)
+      console.log(this.imgUrl)
       this.imgUrl = URL.createObjectURL(file.raw)
     },
     beforeAvatarUpload(file) {
@@ -327,8 +364,8 @@ export default {
       return isLt4M
     },
     // 删除操作
-    //根据newsId删除新闻
-    async handleDelete(newsId) {
+    //根据zsjzId删除新闻
+    async handleDelete(zsjzId) {
       const confirmResult = await this.$confirm('是否删除此条新闻？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -340,14 +377,14 @@ export default {
         return this.$message.info('已取消删除')
       }
       const { data: res } = await this.$axios
-        .delete('/api/news/deleteNewsById/' + newsId)
+        .delete('/api/zsjz/deletezsjzById/' + zsjzId)
         .then(res => {
           if (this.success == true) {
             return this.$message.error('删除用户失败')
           }
           this.$message.success('删除用户成功')
           // 刷新列表
-          this.getNews()
+          this.getzsjz()
         })
     },
     // 编辑按钮
@@ -363,12 +400,10 @@ export default {
     handleUpdate(formName) {
       // 定义数据
       let data = {
-        newsId: this.editForm.newsId,
-        newsTitle: this.editForm.newsTitle,
-        newsContent: this.editForm.newsContent,
-        file: this.editForm.file,
-        newsScource:this.editForm.newsScource,
-        newsType:this.editForm.newsType
+        zsjzId: this.editForm.zsjzId,
+        zsjzTitle: this.editForm.zsjzTitle,
+        zsjzContent: this.editForm.zsjzContent,
+        file: this.editForm.file
       }
       let vm = this
       this.$refs[formName].validate(valid => {
@@ -376,7 +411,7 @@ export default {
           vm.$refs.upload.submit()
           this.$message.success('编辑成功')
           this.editFormVisible = false
-          this.getNews()
+          this.getzsjz()
         } else {
           return false
         }
@@ -384,26 +419,27 @@ export default {
     }
   },
   filters: {
-    newsScource(value) {
+    zsjzType(value) {
       if (value === 1) {
-        return '剑桥英语'
-      } else if (value === 2) {
-        return '高铁专业'
-      } else if (value === 3) {
         return '护理专业'
-      } else if (value === 4) {
-        return '幼儿教育'
-      }
-    },
-    newsType(value) {
-      if (value === 1) {
-        return '行业资讯'
       } else if (value === 2) {
-        return '招生解答'
+        return '幼儿教育'
       } else if (value === 3) {
-        return '校园动态'
+        return '计算机应用'
       } else if (value === 4) {
-        return '通知动态'
+        return '高铁专业'
+      } else if (value === 5) {
+        return '航空服务'
+      } else if (value === 6) {
+        return '会计'
+      } else if (value === 7) {
+        return '汽车维修'
+      } else if (value === 8) {
+        return '电子商务'
+      } else if (value === 9) {
+        return '电气自动化'
+      } else if (value === 10) {
+        return '数控加工'
       }
     }
   }
@@ -414,7 +450,7 @@ export default {
   display: flex;
 }
 .content {
-  width: 1400px;
+  width: 2500px;
   height: 100%;
   margin: 0 auto;
 }
@@ -423,12 +459,6 @@ export default {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-.newsContent {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  display: -webkit-inline-box;
 }
 .el-table--enable-row-transition .el-table__body td {
   text-align: center;
@@ -474,6 +504,9 @@ export default {
   margin: 0px;
 }
 .el-radio.is-bordered {
-  margin-right: 0px;
+  margin-right: 10px;
+}
+.el-radio.is-bordered + .el-radio.is-bordered {
+  margin-left: 0px;
 }
 </style>

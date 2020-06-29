@@ -11,7 +11,7 @@
               </div>
               <div>
                 <h3>
-                  环美亚后台
+                  安徽中专招生网后台
                 </h3>
                 <h5>
                   hmyedu.com
@@ -21,11 +21,23 @@
           </el-col>
           <el-col :span="16">
             <div class="header-tabs">
+              <router-link to="/course">
+                <div><span>招生简章</span></div>
+              </router-link>
               <router-link to="/news">
-                <div><span>热点新闻</span></div>
+                <div><span>新闻管理</span></div>
               </router-link>
               <router-link to="/user">
                 <div><span>用户预留信息</span></div>
+              </router-link>
+              <router-link to="/phone">
+                <div><span>用户手机号码</span></div>
+              </router-link>
+              <router-link to="/letter">
+                <div><span>校长留言箱</span></div>
+              </router-link>
+              <router-link to="/banner">
+                <div><span>轮播图</span></div>
               </router-link>
             </div>
           </el-col>
@@ -42,17 +54,6 @@
       <div class="hr">
         <hr>
       </div>
-      <div class="container">
-        <keep-alive>
-          <router-view></router-view>
-        </keep-alive>
-      </div>
-      <!-- 
-    <div class="footer">
-      <div class="footer-record">©2019 环美亚国际教育 版权所有</div>
-      <input placeholder="">
-    </div>
-    -->
     </div>
   </header>
 </template>
@@ -134,10 +135,10 @@ a {
   display: flex;
   align-items: center;
   margin-right: 50px;
-  color: rgba(41, 128, 185, 1);
+  color: #000000;
 }
 .header-tabs div:hover {
-  color: #000;
+  color: rgba(41, 128, 185, 1);
 }
 /* 鼠标悬停样式 */
 .header-tabs,

@@ -14,30 +14,22 @@
         <el-row>
           <el-col>
             <template>
-              <el-table :data="send"
+              <el-table :data="msg"
                         style="width:100%"
                         stripe>
-                <el-table-column prop="sendName"
-                                 label="姓名"></el-table-column>
-                <el-table-column prop="sendPhone"
+                <el-table-column prop="letterType"
+                                 label="课程类型"></el-table-column>
+                <el-table-column prop="letterContent"
+                                 label="留言内容"></el-table-column>
+                <el-table-column prop="letterPhone"
                                  label="电话"></el-table-column>
-                <el-table-column prop="sendSex"
-                                 label="性别">
-                  <template slot-scope="scope">
-                    <div>
-                      <span>
-                        {{scope.row.sendSex | sex}}
-                      </span>
-                    </div>
-                  </template>
-                </el-table-column>
                 <el-table-column label="操作">
                   <template slot-scope="msg">
                     <div>
                       <el-button type="danger"
                                  size="medium"
                                  icon="el-icon-delete"
-                                 @click.native.prevent="handleDelete(msg.row.sendId)">删除</el-button>
+                                 @click.native.prevent="handleDelete(msg.row.letterId)">删除</el-button>
                     </div>
                   </template>
                 </el-table-column>
@@ -63,11 +55,11 @@ import myHeader from '../../components/header'
 export default {
   data() {
     return {
-      send: [],
+      msg: [],
       page: {
         pageNum: 1,
         total: 0,
-        pageSize: 10
+        pageSize: 8
       }
     }
   },
@@ -75,21 +67,21 @@ export default {
     myHeader
   },
   //   页面初始化需要进行数据渲染
-  mounted() {
+  created() {
     this.getMsg()
   },
   methods: {
     // 获取后台用戶数据
     getMsg(pageNum) {
       this.$axios
-        .get('/api/send/getAllSend/' + this.page.pageNum)
+        .get('/api/letter/getAllLetter/' + this.page.pageNum)
         .then(res => {
           if (res.data.uAuth === 'true') {
             this.$message.error('您已退出登陆，请重新登陆')
             return this.$router.push('/login')
           }
           this.page.total = res.data.data.total
-          this.send = res.data.data.list
+          this.msg = res.data.data.list
         })
         .catch(err => {})
     },
@@ -99,8 +91,8 @@ export default {
     },
     // 删除操作
     //根据msgId删除用戶信息
-    async handleDelete(sendId) {
-      const confirmResult = await this.$confirm('是否删除此条信息？', '提示', {
+    async handleDelete(letterId) {
+      const confirmResult = await this.$confirm('是否删除此条新闻？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -111,7 +103,7 @@ export default {
         return this.$message.info('已取消删除')
       }
       const { data: res } = await this.$axios
-        .delete('/api/send/deleteSendById/' + sendId)
+        .delete('/api/letter/deleteLetterById/' + letterId)
         .then(res => {
           if (this.success == true) {
             return this.$message.error('删除用户信息失败')
@@ -120,15 +112,9 @@ export default {
           // 刷新列表
           this.getMsg()
         })
-    }
-  },
-  filters: {
-    sex(value) {
-      if (value === 1) {
-        return '男'
-      } else if (value === 2) {
-        return '女'
-      }
+    },
+    mounted() {
+      this.getMsg()
     }
   }
 }
