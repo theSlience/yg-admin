@@ -1,6 +1,6 @@
 // 根据不同的环境设置不同的baseUrl
 // 本地代理
-let baseUrl = "/api";
+let baseUrl = "/api1";
 
 switch (process.env.NODE_ENV) {
   case "dev":
@@ -13,7 +13,7 @@ switch (process.env.NODE_ENV) {
     break;
   // 生产环境
   case "production":
-    baseUrl = "https://api.feleti.cn";
+    baseUrl = "https://api1.feleti.cn";
     break;
 }
 

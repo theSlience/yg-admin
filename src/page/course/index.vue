@@ -4,10 +4,10 @@
  * @Author: sueRimn
  * @Date: 2020-05-12 09:16:42
  * @LastEditors: sueRimn
- * @LastEditTime: 2020-06-28 14:47:02
+ * @LastEditTime: 2020-08-03 11:14:44
  -->
 <template>
-  <div>
+  <div class="ct">
     <my-header></my-header>
     <div style="display:flex;">
       <div class="content">
@@ -33,7 +33,8 @@
                 <el-table-column prop="zsjzSummary"
                                  label="课程摘要"></el-table-column>
                 <el-table-column prop="zsjzContent"
-                                 label="专业介绍">
+                                 label="专业介绍"
+                                 style="white-space: none;">
                   <!-- <template slot-scope="scope">
                     <div v-html="scope.row.zsjzContent">
                     </div>
@@ -47,15 +48,19 @@
                                  label="报名人数"></el-table-column>
                 <el-table-column prop="endTime"
                                  label="截止日期"></el-table-column>
+                <el-table-column prop="zsjzTime"
+                                 label="学制时间"></el-table-column>
                 <el-table-column prop="zsjzA"
                                  label="左图标"></el-table-column>
                 <el-table-column prop="zsjzB"
                                  label="中图标"></el-table-column>
                 <el-table-column prop="zsjzC"
                                  label="右图标"></el-table-column>
+                <el-table-column prop="zsjzUrl"
+                                 label="跳转地址"></el-table-column>
                 <el-table-column label="图片">
                   <template slot-scope="scope">
-                    <img :src="scope.row.img"
+                    <img :src="scope.row.imga"
                          style="width: 100px;height:50px"></template>
                 </el-table-column>
                 <el-table-column prop="zsjzType"
@@ -67,9 +72,10 @@
                 </el-table-column>
                 <el-table-column label="操作">
                   <template slot-scope="zsjz">
-                    <div style="display:block;">
+                    <div style="display:grid;">
                       <el-button icon="el-icon-edit"
                                  size="medium"
+                                 style="margin-bottom:5px;"
                                  @click="handleEdit(zsjz.$index,zsjz.row)">编辑</el-button>
                       <el-button type="danger"
                                  size="medium"
@@ -122,15 +128,10 @@
               <el-input v-model="zsjzForm.zsjzJob"
                         autocomplete="off"></el-input>
             </el-form-item>
-            <!-- <el-form-item label="报名人数"
-                          prop="enCount">
-              <el-input v-model="zsjzForm.enCount"
+            <el-form-item label="学制时间"
+                          prop="zsjzTime">
+              <el-input v-model="zsjzForm.zsjzTime"
                         autocomplete="off"></el-input>
-            </el-form-item> -->
-            <el-form-item label="截止日期"
-                          prop="endTime">
-              <el-date-picker v-model="zsjzForm.endTime"
-                              placeholder="选择截止日期"></el-date-picker>
             </el-form-item>
             <el-form-item label="左图标描述"
                           prop="zsjzA">
@@ -147,36 +148,34 @@
               <el-input v-model="zsjzForm.zsjzC"
                         autocomplete="off"></el-input>
             </el-form-item>
+            <el-form-item label="跳转地址（非必填）"
+                          prop="zsjzUrl">
+              <el-input v-model="zsjzForm.zsjzUrl"
+                        autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="截止日期"
+                          prop="endTime">
+              <el-date-picker v-model="zsjzForm.endTime"
+                              placeholder="选择截止日期"></el-date-picker>
+            </el-form-item>
             <el-form-item label="图片"
                           prop="file"
                           type="file">
               <el-upload class="avatar-uploader"
-                         action="/api/zsjz/postZsjz"
-                         :auto-upload="false"
                          ref="upload"
+                         :action="uploadUrl"
+                         :auto-upload="false"
                          :limit="4"
-                         :data="zsjzForm"
+                         multiple
                          :on-success="handleAvatarUpload"
-                         :before-upload="beforeAvatarUpload">
+                         :file-list="fileList"
+                         :http-request="uploadImg">
                 <img v-if="zsjzForm.imgUrl"
                      :src="zsjzForm.imgUrl"
                      class="avatar">
                 <i v-else
                    class="el-icon-plus avatar-uploader-icon"></i>
               </el-upload>
-              <!-- <el-upload class="upload-demo"
-                         action="/api/zsjz/postZsjz"
-                         :on-preview="handlePreview"
-                         :on-remove="handleRemove"
-                         :before-remove="beforeRemove"
-                         multiple
-                         :limit="4"
-                         :on-exceed="handleExceed"
-                         :file-list="fileList">
-                <el-button size="small"
-                           type="primary">点击上传</el-button>
-
-              </el-upload> -->
             </el-form-item>
             <el-form-item label="类型"
                           prop="zsjzType">
@@ -203,40 +202,90 @@
                    width="80%">
           <el-form :model="editForm"
                    ref="editForm">
-            <el-form-item prop="zsjzId"></el-form-item>
-            <el-form-item label="标题"
-                          prop="zsjzTitle">
+            <el-form-item label="课程名称"
+                          prop="zszjTitle">
               <el-input v-model="editForm.zsjzTitle"
                         autocomplete="off"></el-input>
             </el-form-item>
-            <el-form-item label="内容"
+            <el-form-item label="课程摘要"
+                          prop="zsjzSummary">
+              <el-input v-model="editForm.zsjzSummary"
+                        autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="专业介绍"
                           prop="zsjzContent">
-              <quill-editor ref="text"
-                            v-model="editForm.zsjzContent"
-                            class="myQuillEditor"
-                            :options="editorOption" />
-              <!--
               <el-input v-model="editForm.zsjzContent"
-                        autocomplete="off"
-                        type="textarea"></el-input>
-                -->
+                        autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="学习课程"
+                          prop="zsjzClass">
+              <el-input v-model="editForm.zsjzClass"
+                        autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="就业方向"
+                          prop="zsjzJob">
+              <el-input v-model="editForm.zsjzJob"
+                        autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="学制时间"
+                          prop="zsjzTime">
+              <el-input v-model="editForm.zsjzTime"
+                        autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="左图标描述"
+                          prop="zsjzA">
+              <el-input v-model="editForm.zsjzA"
+                        autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="中图标描述"
+                          prop="zsjzB">
+              <el-input v-model="editForm.zsjzB"
+                        autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="右图标描述"
+                          prop="zsjzC">
+              <el-input v-model="editForm.zsjzC"
+                        autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="跳转地址"
+                          prop="zsjzUrl">
+              <el-input v-model="editForm.zsjzUrl"
+                        autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="截止日期"
+                          prop="endTime">
+              <el-date-picker v-model="editForm.endTime"
+                              placeholder="选择截止日期"></el-date-picker>
             </el-form-item>
             <el-form-item label="图片"
                           prop="file"
                           type="file">
               <el-upload class="avatar-uploader"
-                         action="/api/zsjz/update"
-                         :auto-upload="false"
                          ref="upload"
-                         :data="editForm"
+                         :action="editUrl"
+                         :auto-upload="false"
+                         :limit="4"
+                         multiple
                          :on-success="handleAvatarUpload"
-                         :before-upload="beforeAvatarUpload">
-                <img v-if="editForm.img"
-                     :src="editForm.img"
+                         :file-list="fileList"
+                         :http-request="editImg">
+                <img v-if="zsjzForm.imgUrl"
+                     :src="zsjzForm.imgUrl"
                      class="avatar">
                 <i v-else
                    class="el-icon-plus avatar-uploader-icon"></i>
               </el-upload>
+            </el-form-item>
+            <el-form-item label="类型"
+                          prop="zsjzType">
+              <el-radio-group v-model="editForm.zsjzType">
+                <div style="display:flex;flex-wrap: wrap;">
+                  <el-radio border
+                            v-for="item in zsjzTypeOptions"
+                            :key="item.zsjzType"
+                            :label="item.zsjzType">{{item.Text}}</el-radio>
+                </div>
+              </el-radio-group>
             </el-form-item>
           </el-form>
           <span slot="footer">
@@ -259,6 +308,13 @@ import myHeader from '../../components/header'
 export default {
   data() {
     return {
+      imgList: [],
+      a: Number,
+      fileData: '',
+      file: '',
+      uploadUrl: '/api1/zsjz/postZsjz',
+      editUrl: '/api1/zsjz/putZsjzById',
+      fileList: [],
       dialogVisible: false,
       editFormVisible: false,
       zsjz: [],
@@ -275,12 +331,24 @@ export default {
         zsjzJob: '',
         enCount: '',
         zsjzSummary: '',
-        endTime: ''
+        endTime: '',
+        zsjzTime: '',
+        zsjzUrl: '',
       },
       // 编辑模态框
       editForm: {
         zsjzTitle: '',
-        zsjzContent: ''
+        zsjzContent: '',
+        zsjzType: '',
+        zsjzA: '',
+        zsjzB: '',
+        zsjzC: '',
+        zsjzJob: '',
+        enCount: '',
+        zsjzSummary: '',
+        endTime: '',
+        zsjzTime: '',
+        zsjzUrl: '',
       },
       zsjzTypeOptions: [
         { zsjzType: 1, Text: '护理专业' },
@@ -292,20 +360,20 @@ export default {
         { zsjzType: 7, Text: '汽车维修' },
         { zsjzType: 8, Text: '电子商务' },
         { zsjzType: 9, Text: '电气自动化' },
-        { zsjzType: 10, Text: '数控加工' }
+        { zsjzType: 10, Text: '数控加工' },
       ],
       // 分页数据
       page: {
         pageNum: 1,
         total: 0,
-        pageSize: 6
-      }
+        pageSize: 6,
+      },
     }
   },
   // 引入头部组件
   components: {
     quillEditor,
-    myHeader
+    myHeader,
   },
   //   页面初始化需要进行数据渲染
   mounted() {
@@ -319,41 +387,40 @@ export default {
     // 获取后台新闻数据
     getzsjz() {
       this.$axios
-        .get('/api/zsjz/getAllZsjz/' + this.page.pageNum)
-        .then(res => {
+        .get('/api1/zsjz/getAllZsjz/' + this.page.pageNum)
+        .then((res) => {
           if (res.data.uAuth === 'true') {
             this.$message.error('您已退出登陆，请重新登陆')
             return this.$router.push('/login')
           }
-          console.log(res.data.data.list)
           this.zsjz = res.data.data.list
+          // console.log(this.zsjz)
           this.page.total = res.data.data.total
         })
-        .catch(err => {})
+        .catch((err) => {})
     },
     currentChange(pageNum) {
       this.page.pageNum = pageNum
       this.getzsjz()
     },
-    submitForm(formName) {
-      let vm = this
-      // 表单登录之前的预验证
-      this.$refs[formName].validate(valid => {
-        console.log(valid)
-        if (valid) {
-          vm.$refs.upload.submit()
-          this.$message.success('添加成功')
-          this.dialogVisible = false
-          this.getzsjz()
-        } else {
-          return false
-        }
-      })
+    uploadImg(file) {
+      this.fileData.append('files', file.file)
     },
-    handleAvatarUpload(res, file) {
-      this.imgUrl = res.push(this.imgUrl)
-      console.log(res)
-      console.log(this.imgUrl)
+    editImg(file) {
+      this.fileData.append('file', file.file)
+    },
+    submitForm() {
+      this.fileData = new FormData()
+      this.$refs.upload.submit()
+      this.fileData.append('zsjzEntity', JSON.stringify(this.zsjzForm))
+      this.$axios
+        .post(this.uploadUrl, this.fileData)
+        .then((res) => {
+          this.dialogVisible = false
+        })
+        .catch((err) => {})
+    },
+    handleAvatarUpload(res, file, fileList) {
       this.imgUrl = URL.createObjectURL(file.raw)
     },
     beforeAvatarUpload(file) {
@@ -369,23 +436,21 @@ export default {
       const confirmResult = await this.$confirm('是否删除此条新闻？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        type: 'warning'
-      }).catch(err => err)
+        type: 'warning',
+      }).catch((err) => err)
       // 确认删除则返回字符串 confirm
       // 取消返回 cancel
       if (confirmResult !== 'confirm') {
         return this.$message.info('已取消删除')
       }
-      const { data: res } = await this.$axios
-        .delete('/api/zsjz/deletezsjzById/' + zsjzId)
-        .then(res => {
-          if (this.success == true) {
-            return this.$message.error('删除用户失败')
-          }
-          this.$message.success('删除用户成功')
-          // 刷新列表
-          this.getzsjz()
-        })
+      this.$axios.delete('/api1/zsjz/deleteZsjzById/' + zsjzId).then((res) => {
+        if (this.success == true) {
+          return this.$message.error('删除用户失败')
+        }
+        this.$message.success('删除用户成功')
+        // 刷新列表
+        this.getzsjz()
+      })
     },
     // 编辑按钮
     handleEdit(index, row) {
@@ -403,20 +468,27 @@ export default {
         zsjzId: this.editForm.zsjzId,
         zsjzTitle: this.editForm.zsjzTitle,
         zsjzContent: this.editForm.zsjzContent,
-        file: this.editForm.file
+        file: this.editForm.file,
       }
-      let vm = this
-      this.$refs[formName].validate(valid => {
+      //   let vm = this
+      this.$refs[formName].validate((valid) => {
         if (valid) {
-          vm.$refs.upload.submit()
-          this.$message.success('编辑成功')
-          this.editFormVisible = false
+          this.fileData = new FormData()
+          this.$refs.upload.submit()
+          this.fileData.append('zsjzEntity', JSON.stringify(this.editForm))
+          this.$axios
+            .put(this.editUrl, this.fileData)
+            .then((res) => {
+              this.$message.success('编辑成功')
+              this.editFormVisible = false
+            })
+            .catch((err) => {})
           this.getzsjz()
         } else {
           return false
         }
       })
-    }
+    },
   },
   filters: {
     zsjzType(value) {
@@ -441,16 +513,19 @@ export default {
       } else if (value === 10) {
         return '数控加工'
       }
-    }
-  }
+    },
+  },
 }
 </script>
 <style scopd>
+.ct {
+  width: 2000px;
+}
 .el-col-16 {
   display: flex;
 }
 .content {
-  width: 2500px;
+  width: 100%;
   height: 100%;
   margin: 0 auto;
 }
@@ -458,7 +533,7 @@ export default {
   text-align: center;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
+  white-space: nowrap !important;
 }
 .el-table--enable-row-transition .el-table__body td {
   text-align: center;
@@ -505,6 +580,9 @@ export default {
 }
 .el-radio.is-bordered {
   margin-right: 10px;
+}
+.el-button + .el-button {
+  margin: 0 0 5px 0px;
 }
 .el-radio.is-bordered + .el-radio.is-bordered {
   margin-left: 0px;

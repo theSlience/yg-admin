@@ -1,5 +1,5 @@
 // 把所有的api接口安装到全局，然后在main.js文件中导入
-import apiList from "./apiList";
+import apiList from "./api1List";
 
 const install = function(Vue) {
   if (install.installed) {

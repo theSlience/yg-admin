@@ -1,3 +1,11 @@
+/*
+ * @Descripttion: 
+ * @version: 
+ * @Author: sueRimn
+ * @Date: 2020-06-22 19:20:23
+ * @LastEditors: sueRimn
+ * @LastEditTime: 2020-08-03 10:05:08
+ */ 
 "use strict";
 // Template version: 1.3.1
 // see http://vuejs-templates.github.io/webpack for documentation.
@@ -13,21 +21,22 @@ module.exports = {
     assetsPublicPath: "/",
     // 配置反向代理解决跨域问题
     proxyTable: {
-      "/api/": {
+      "/api1/": {
         // 调用的接口域名和端口号
-        target: "http://192.168.1.106:8012",
+        target: "http://47.114.189.204:8012",
         // 表示实现跨域
         changeOrigin: true,
         pathRewrite: {
-          // /api代替target里面的地址，在组件中使用时调用接口时能直接使用api代替
-          "^/api": "/"
+          // /api1代替target里面的地址，在组件中使用时调用接口时能直接使用api代替
+          "^/api1": "/"
         }
       }
     },
 
     // Various Dev Server settings
-    host: "192.168.1.103", // can be overwritten by process.env.HOST
-    port: 8080, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
+    // host: "127.0.0.1", // can be overwritten by process.env.HOST
+    host: "127.0.0.1", // can be overwritten by process.env.HOST
+    port: 8081, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
     autoOpenBrowser: true,
     errorOverlay: true,
     notifyOnErrors: true,
@@ -64,7 +73,7 @@ module.exports = {
     // Paths
     assetsRoot: path.resolve(__dirname, "../dist"),
     assetsSubDirectory: "static",
-    assetsPublicPath: "/",
+    assetsPublicPath: "./",
 
     // https://webpack.js.org/configuration/devtool/#production
     devtool: "#source-map",

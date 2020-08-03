@@ -4,7 +4,7 @@
  * @Author: sueRimn
  * @Date: 2020-05-12 09:16:42
  * @LastEditors: sueRimn
- * @LastEditTime: 2020-06-28 15:54:55
+ * @LastEditTime: 2020-08-03 10:24:13
  -->
 <template>
   <div>
@@ -109,7 +109,7 @@
                           prop="file"
                           type="file">
               <el-upload class="avatar-uploader"
-                         action="/api/news/postNews"
+                         action="/api1/news/postNews"
                          :auto-upload="false"
                          ref="upload"
                          :data="newsForm"
@@ -175,7 +175,7 @@
                           prop="file"
                           type="file">
               <el-upload class="avatar-uploader"
-                         action="/api/news/putNewsById"
+                         action="/api1/news/putNewsById"
                          :auto-upload="false"
                          ref="upload"
                          :data="editForm"
@@ -285,13 +285,13 @@ export default {
     // 获取后台新闻数据
     getNews() {
       this.$axios
-        .get('/api/news/getAllNews/' + this.page.pageNum)
+        .get('/api1/news/getAllNews/' + this.page.pageNum)
         .then(res => {
           if (res.data.uAuth === 'true') {
             this.$message.error('您已退出登陆，请重新登陆')
             return this.$router.push('/login')
           }
-          console.log(res)
+          // console.log(res)
           this.news = res.data.data.list
           this.page.total = res.data.data.total
         })
@@ -305,7 +305,7 @@ export default {
       let vm = this
       // 表单登录之前的预验证
       this.$refs[formName].validate(valid => {
-        console.log(valid)
+        // console.log(valid)
         if (valid) {
           vm.$refs.upload.submit()
           this.$message.success('添加成功')
@@ -340,7 +340,7 @@ export default {
         return this.$message.info('已取消删除')
       }
       const { data: res } = await this.$axios
-        .delete('/api/news/deleteNewsById/' + newsId)
+        .delete('/api1/news/deleteNewsById/' + newsId)
         .then(res => {
           if (this.success == true) {
             return this.$message.error('删除用户失败')
@@ -414,7 +414,7 @@ export default {
   display: flex;
 }
 .content {
-  width: 1400px;
+  width: 100%;
   height: 100%;
   margin: 0 auto;
 }
@@ -429,6 +429,10 @@ export default {
   text-overflow: ellipsis;
   white-space: nowrap;
   display: -webkit-inline-box;
+ 
+}
+.newsContent img{
+    display: none;
 }
 .el-table--enable-row-transition .el-table__body td {
   text-align: center;

@@ -13,28 +13,28 @@
                 <h3>
                   安徽中专招生网后台
                 </h3>
-                <h5>
-                  hmyedu.com
-                </h5>
               </div>
             </div>
           </el-col>
           <el-col :span="16">
             <div class="header-tabs">
-              <router-link to="/course">
-                <div><span>招生简章</span></div>
-              </router-link>
-              <router-link to="/news">
-                <div><span>新闻管理</span></div>
-              </router-link>
               <router-link to="/user">
                 <div><span>用户预留信息</span></div>
               </router-link>
               <router-link to="/phone">
                 <div><span>用户手机号码</span></div>
               </router-link>
+              <router-link to="/sign">
+                <div><span>报名信息</span></div>
+              </router-link>
               <router-link to="/letter">
                 <div><span>校长留言箱</span></div>
+              </router-link>
+              <router-link to="/course">
+                <div><span>招生简章</span></div>
+              </router-link>
+              <router-link to="/news">
+                <div><span>新闻管理</span></div>
               </router-link>
               <router-link to="/banner">
                 <div><span>轮播图</span></div>
@@ -66,7 +66,7 @@ export default {
   methods: {
     // 退出功能
     logout() {
-      this.$axios.post('/api/user/logout')
+      this.$axios.post('/api1/user/logout')
       // 弹出确认对话框
       // 点击确认后，跳回用户登录页面，清除token
       this.$confirm('请确认退出？', '提示', {
@@ -94,7 +94,7 @@ export default {
   }
 }
 </script>
-<style scoped>
+<style scopd>
 .el-col-16 {
   display: flex;
 }

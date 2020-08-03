@@ -74,7 +74,7 @@ export default {
     // 获取后台用戶数据
     getMsg(pageNum) {
       this.$axios
-        .get('/api/letter/getAllLetter/' + this.page.pageNum)
+        .get('/api1/letter/getAllLetter/' + this.page.pageNum)
         .then(res => {
           if (res.data.uAuth === 'true') {
             this.$message.error('您已退出登陆，请重新登陆')
@@ -103,7 +103,7 @@ export default {
         return this.$message.info('已取消删除')
       }
       const { data: res } = await this.$axios
-        .delete('/api/letter/deleteLetterById/' + letterId)
+        .delete('/api1/letter/deleteLetterById/' + letterId)
         .then(res => {
           if (this.success == true) {
             return this.$message.error('删除用户信息失败')
@@ -124,7 +124,7 @@ export default {
   display: flex;
 }
 .content {
-  width: 1300px;
+  width: 100%;
   height: 100%;
   margin: 0 auto;
 }

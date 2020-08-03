@@ -4,7 +4,7 @@
  * @Author: sueRimn
  * @Date: 2020-05-12 09:16:42
  * @LastEditors: sueRimn
- * @LastEditTime: 2020-05-15 15:24:14
+ * @LastEditTime: 2020-08-03 09:43:58
  -->
 <template>
   <div>
@@ -17,11 +17,13 @@
               <el-table :data="msg"
                         style="width:100%"
                         stripe>
+                <el-table-column prop="addTime"
+                                 label="报名时间">
+                  <template slot-scope="scope">
+                    {{scope.row.addTime | time}}
+                  </template></el-table-column>
                 <el-table-column prop="phoneNum"
                                  label="电话"></el-table-column>
-                <div onmouseover="this.className='.show'"
-                     onmouseout="this.className='.cell'">
-                </div>
                 <el-table-column label="操作">
                   <template slot-scope="msg">
                     <div>
@@ -58,32 +60,32 @@ export default {
       page: {
         pageNum: 1,
         total: 0,
-        pageSize: 15
-      }
+        pageSize: 15,
+      },
     }
   },
   components: {
-    myHeader
+    myHeader,
   },
   //   页面初始化需要进行数据渲染
-  created() {
+  mounted() {
     this.getMsg()
   },
   methods: {
     // 获取后台用戶数据
     getMsg(pageNum) {
       this.$axios
-        .get('/api/phone/getAllPhone/' + this.page.pageNum)
-        .then(res => {
+        .get('/api1/phone/getAllPhone/' + this.page.pageNum)
+        .then((res) => {
           if (res.data.uAuth === 'true') {
             this.$message.error('您已退出登陆，请重新登陆')
             return this.$router.push('/login')
           }
-          console.log(res.data.data.list)
+          // console.log(res.data.data.list)
           this.page.total = res.data.data.total
           this.msg = res.data.data.list
         })
-        .catch(err => {})
+        .catch((err) => {})
     },
     currentChange(pageNum) {
       this.page.pageNum = pageNum
@@ -95,16 +97,16 @@ export default {
       const confirmResult = await this.$confirm('是否删除此条号码？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        type: 'warning'
-      }).catch(err => err)
+        type: 'warning',
+      }).catch((err) => err)
       // 确认删除则返回字符串 confirm
       // 取消返回 cancel
       if (confirmResult !== 'confirm') {
         return this.$message.info('已取消删除')
       }
       const { data: res } = await this.$axios
-        .delete('/api/phone/deletePhoneById/' + phoneId)
-        .then(res => {
+        .delete('/api1/phone/deletePhoneById/' + phoneId)
+        .then((res) => {
           if (this.success == true) {
             return this.$message.error('删除用户信息失败')
           }
@@ -113,10 +115,12 @@ export default {
           this.getMsg()
         })
     },
-    mounted() {
-      this.getMsg()
-    }
-  }
+  },
+  filters: {
+    time(e) {
+      return (e || '').slice(0, 10)
+    },
+  },
 }
 </script>
 <style scopd>
@@ -124,7 +128,7 @@ export default {
   display: flex;
 }
 .content {
-  width: 1300px;
+  width: 100%;
   height: 100%;
   margin: 0 auto;
 }

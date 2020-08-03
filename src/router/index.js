@@ -4,6 +4,7 @@ import Router from "vue-router";
 //引入组件
 import News from "../page/news/index.vue"
 import User from "../page/user/index.vue"
+import Sign from "../page/sign/index.vue"
 import Phone from "../page/phone/index.vue"
 import Login from "../components/Login.vue"
 import Banner from "../page/banner/index.vue"
@@ -54,6 +55,11 @@ const router = new Router({
       path: "/banner",
       name: "Banner",
       component: Banner
+    },
+    {
+      path: '/sign',
+      name: "Sign",
+      component: Sign
     }
   ]
 });

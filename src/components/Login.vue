@@ -59,10 +59,10 @@ export default {
     login(userEntity) {
       const that = this
       this.$axios
-        .post('/api/user/login', userEntity)
+        .post('/api1/user/login', userEntity)
         .then(res => {
           if (res.data.code == 200) {
-            console.log(res)
+            // console.log(res)
             // window.sessionStorage.setItem('token', res.data.token)
             this.$message.success('登陆成功')
             return that.$router.push('/course')

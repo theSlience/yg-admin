@@ -4,7 +4,7 @@
  * @Author: sueRimn
  * @Date: 2020-05-12 09:16:42
  * @LastEditors: sueRimn
- * @LastEditTime: 2020-06-22 15:57:30
+ * @LastEditTime: 2020-07-11 09:04:15
  -->
 <template>
   <div>
@@ -114,7 +114,7 @@
                           prop="file"
                           type="file">
               <el-upload class="avatar-uploader"
-                         action="/api/banner/postBanner"
+                         action="/api1/banner/postBanner"
                          :auto-upload="false"
                          ref="upload"
                          :data="bannerForm"
@@ -168,7 +168,7 @@
                           prop="file"
                           type="file">
               <el-upload class="avatar-uploader"
-                         action="/api/banner/putBannerById"
+                         action="/api1/banner/putBannerById"
                          :auto-upload="false"
                          ref="upload"
                          :data="editForm"
@@ -251,13 +251,13 @@ export default {
     // 获取后台新闻数据
     getBanners() {
       this.$axios
-        .get('/api/banner/getAllBanner/' + this.page.pageNum)
+        .get('/api1/banner/getAllBanner/' + this.page.pageNum)
         .then(res => {
           if (res.data.uAuth === 'true') {
             this.$message.error('您已退出登陆，请重新登陆')
             return this.$router.push('/login')
           }
-          console.log(JSON.parse(res.data.data).list)
+          // console.log(JSON.parse(res.data.data).list)
           this.banner = JSON.parse(res.data.data).list
           this.page.total = JSON.parse(res.data.data).total
         })
@@ -272,7 +272,7 @@ export default {
       let vm = this
       // 表单登录之前的预验证
       this.$refs[formName].validate(valid => {
-        console.log(valid)
+        // console.log(valid)
         if (valid) {
           vm.$refs.upload.submit()
           this.$message.success('添加成功')
@@ -293,7 +293,7 @@ export default {
       }
       return isLt4M
       this.$axios
-        .put('/api/banner/putBannerById', { file: file })
+        .put('/api1/banner/putBannerById', { file: file })
         .then(res => {})
         .catch(err => {})
     },
@@ -311,7 +311,7 @@ export default {
         return this.$message.info('已取消删除')
       }
       const { data: res } = await this.$axios
-        .delete('/api/banner/deleteBannerById/' + bannerId)
+        .delete('/api1/banner/deleteBannerById/' + bannerId)
         .then(res => {
           if (this.success == true) {
             return this.$message.error('删除用户失败')
@@ -352,14 +352,14 @@ export default {
       })
     },
     changeSwitch(data, b, index) {
-      console.log(b.bannerId)
-      console.log(data)
-      console.log(index)
+      // console.log(b.bannerId)
+      // console.log(data)
+      // console.log(index)
       let form = { bannerType: this.data }
       this.$axios
-        .put(`/api/banner/putBannerFlagById/${b.bannerId}/${data}`)
+        .put(`/api1/banner/putBannerFlagById/${b.bannerId}/${data}`)
         .then(res => {
-          console.log(res)
+          // console.log(res)
         })
     }
   },
@@ -386,7 +386,7 @@ export default {
   display: flex;
 }
 .content {
-  width: 1300px;
+  width: 100%;
   height: 100%;
   margin: 0 auto;
 }

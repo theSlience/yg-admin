@@ -2,9 +2,17 @@
  * @Descripttion: 
  * @version: 
  * @Author: sueRimn
+ * @Date: 2020-06-30 13:27:39
+ * @LastEditors: sueRimn
+ * @LastEditTime: 2020-08-03 09:47:47
+--> 
+<!--
+ * @Descripttion: 
+ * @version: 
+ * @Author: sueRimn
  * @Date: 2020-05-12 09:16:42
  * @LastEditors: sueRimn
- * @LastEditTime: 2020-08-03 09:38:20
+ * @LastEditTime: 2020-05-15 15:24:14
  -->
 <template>
   <div>
@@ -14,25 +22,23 @@
         <el-row>
           <el-col>
             <template>
-              <el-table :data="send"
+              <el-table :data="msg"
                         style="width:100%"
                         stripe>
                 <el-table-column prop="addTime"
                                  label="报名时间">
                   <template slot-scope="scope">
-                    {{scope.row.addTime| time }}
+                    {{scope.row.addTime | time}}
                   </template></el-table-column>
-                <el-table-column prop="sendName"
+                <el-table-column prop="signName"
                                  label="姓名"></el-table-column>
-                <el-table-column prop="sendPhone"
+                <el-table-column prop="signPhone"
                                  label="电话"></el-table-column>
-                <el-table-column prop="sendSex"
-                                 label="性别">
+                <el-table-column prop="signType"
+                                 label="课程">
                   <template slot-scope="scope">
                     <div>
-                      <span>
-                        {{scope.row.sendSex | sex}}
-                      </span>
+                      {{scope.row.signType | signType}}
                     </div>
                   </template>
                 </el-table-column>
@@ -42,7 +48,7 @@
                       <el-button type="danger"
                                  size="medium"
                                  icon="el-icon-delete"
-                                 @click.native.prevent="handleDelete(msg.row.sendId)">删除</el-button>
+                                 @click.native.prevent="handleDelete(msg.row.signId)">删除</el-button>
                     </div>
                   </template>
                 </el-table-column>
@@ -68,11 +74,11 @@ import myHeader from '../../components/header'
 export default {
   data() {
     return {
-      send: [],
+      msg: [],
       page: {
         pageNum: 1,
         total: 0,
-        pageSize: 10,
+        pageSize: 15,
       },
     }
   },
@@ -87,14 +93,15 @@ export default {
     // 获取后台用戶数据
     getMsg(pageNum) {
       this.$axios
-        .get('/api1/send/getAllSend/' + this.page.pageNum)
+        .get('/api1/sign/getAllSign/' + this.page.pageNum)
         .then((res) => {
           if (res.data.uAuth === 'true') {
             this.$message.error('您已退出登陆，请重新登陆')
             return this.$router.push('/login')
           }
+          // console.log(res.data.data.list)
           this.page.total = res.data.data.total
-          this.send = res.data.data.list
+          this.msg = res.data.data.list
         })
         .catch((err) => {})
     },
@@ -103,9 +110,9 @@ export default {
       this.getMsg()
     },
     // 删除操作
-    //根据msgId删除用戶信息
-    async handleDelete(sendId) {
-      const confirmResult = await this.$confirm('是否删除此条信息？', '提示', {
+    //根据signId删除用戶信息
+    async handleDelete(signId) {
+      const confirmResult = await this.$confirm('是否删除此条号码？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning',
@@ -116,7 +123,7 @@ export default {
         return this.$message.info('已取消删除')
       }
       const { data: res } = await this.$axios
-        .delete('/api1/send/deleteSendById/' + sendId)
+        .delete('/api1/sign/deleteSignById/' + signId)
         .then((res) => {
           if (this.success == true) {
             return this.$message.error('删除用户信息失败')
@@ -128,11 +135,31 @@ export default {
     },
   },
   filters: {
-    sex(value) {
+    signType(value) {
       if (value === 1) {
-        return '男'
+        return '护理专业'
       } else if (value === 2) {
-        return '女'
+        return '幼儿教育专业'
+      } else if (value === 3) {
+        return '计算机应用'
+      } else if (value === 4) {
+        return '高铁专业'
+      } else if (value === 5) {
+        return '平面设计'
+      } else if (value === 6) {
+        return '航空服务'
+      } else if (value === 7) {
+        return '会计'
+      } else if (value === 8) {
+        return '汽车维修'
+      } else if (value === 9) {
+        return '电子商务'
+      } else if (value === 10) {
+        return '电气自动化'
+      } else if (value === 11) {
+        return '数控加工'
+      } else if (value === 12) {
+        return '无人机应用'
       }
     },
     time(e) {
