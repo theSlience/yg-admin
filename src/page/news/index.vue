@@ -4,7 +4,7 @@
  * @Author: sueRimn
  * @Date: 2020-05-12 09:16:42
  * @LastEditors: sueRimn
- * @LastEditTime: 2020-08-03 10:24:13
+ * @LastEditTime: 2020-08-15 11:07:27
  -->
 <template>
   <div>
@@ -32,6 +32,14 @@
                                  label="添加时间"></el-table-column>
                 <el-table-column prop="newsTitle"
                                  label="标题"></el-table-column>
+                <el-table-column prop="seoTitle"
+                                 label="seo标题"></el-table-column>
+                <el-table-column prop="seoKeywords"
+                                 label="seo关键字"></el-table-column>
+                <el-table-column prop="seoDescription"
+                                 label="seo描述"></el-table-column>
+                <el-table-column prop="readCount"
+                                 label="阅读次数"></el-table-column>
                 <el-table-column prop="newsContent"
                                  label="内容">
                   <template slot-scope="scope">
@@ -97,7 +105,26 @@
               <el-input v-model="newsForm.newsTitle"
                         autocomplete="off"></el-input>
             </el-form-item>
-
+            <el-form-item label="seo标题"
+                          prop="seoTitle">
+              <el-input v-model="newsForm.seoTitle"
+                        autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="seo关键字"
+                          prop="seoKeywords">
+              <el-input v-model="newsForm.seoKeywords"
+                        autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="seo描述"
+                          prop="seoDescription">
+              <el-input v-model="newsForm.seoDescription"
+                        autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="阅读次数"
+                          prop="readCount">
+              <el-input v-model="newsForm.readCount"
+                        autocomplete="off"></el-input>
+            </el-form-item>
             <el-form-item label="内容"
                           prop="newsContent">
               <quill-editor ref="text"
@@ -162,6 +189,26 @@
             <el-form-item label="标题"
                           prop="newsTitle">
               <el-input v-model="editForm.newsTitle"
+                        autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="seo标题"
+                          prop="seoTitle">
+              <el-input v-model="editForm.seoTitle"
+                        autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="seo关键字"
+                          prop="seoKeywords">
+              <el-input v-model="editForm.seoKeywords"
+                        autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="seo描述"
+                          prop="seoDescription">
+              <el-input v-model="editForm.seoDescription"
+                        autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="阅读次数"
+                          prop="readCount">
+              <el-input v-model="editForm.readCount"
                         autocomplete="off"></el-input>
             </el-form-item>
             <el-form-item label="内容"
@@ -238,40 +285,49 @@ export default {
       imgUrl: '',
       editorOption: {},
       newsForm: {
+        newsType: '',
         newsTitle: '',
+        seoTitle: '',
+        seoKeywords: '',
+        seoDescription: '',
         newsContent: '',
         newsScource: '',
-        newsType: ''
+        readCount: '',
       },
       // 编辑模态框
       editForm: {
         newsTitle: '',
         newsContent: '',
+        seoTitle: '',
+        seoKeywords: '',
+        seoDescription: '',
+        readCount: '',
       },
       newsScourceOptions: [
         { Text: '剑桥英语' },
         { Text: '高铁专业' },
         { Text: '护理专业' },
-        { Text: '幼儿教育' }
+        { Text: '幼儿教育' },
       ],
       newsTypeOptions: [
         { newsType: 1, Text: '行业资讯' },
         { newsType: 2, Text: '招生解答' },
         { newsType: 3, Text: '校园动态' },
-        { newsType: 4, Text: '通知动态' }
+        { newsType: 4, Text: '通知动态' },
+        { newsType: 5, Text: '实时动态' },
       ],
       // 分页数据
       page: {
         pageNum: 1,
         total: 0,
-        pageSize: 6
-      }
+        pageSize: 6,
+      },
     }
   },
   // 引入头部组件
   components: {
     quillEditor,
-    myHeader
+    myHeader,
   },
   //   页面初始化需要进行数据渲染
   mounted() {
@@ -286,7 +342,7 @@ export default {
     getNews() {
       this.$axios
         .get('/api1/news/getAllNews/' + this.page.pageNum)
-        .then(res => {
+        .then((res) => {
           if (res.data.uAuth === 'true') {
             this.$message.error('您已退出登陆，请重新登陆')
             return this.$router.push('/login')
@@ -295,16 +351,17 @@ export default {
           this.news = res.data.data.list
           this.page.total = res.data.data.total
         })
-        .catch(err => {})
+        .catch((err) => {})
     },
     currentChange(pageNum) {
       this.page.pageNum = pageNum
       this.getNews()
     },
+    // 添加新闻
     submitForm(formName) {
       let vm = this
       // 表单登录之前的预验证
-      this.$refs[formName].validate(valid => {
+      this.$refs[formName].validate((valid) => {
         // console.log(valid)
         if (valid) {
           vm.$refs.upload.submit()
@@ -332,8 +389,8 @@ export default {
       const confirmResult = await this.$confirm('是否删除此条新闻？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        type: 'warning'
-      }).catch(err => err)
+        type: 'warning',
+      }).catch((err) => err)
       // 确认删除则返回字符串 confirm
       // 取消返回 cancel
       if (confirmResult !== 'confirm') {
@@ -341,7 +398,7 @@ export default {
       }
       const { data: res } = await this.$axios
         .delete('/api1/news/deleteNewsById/' + newsId)
-        .then(res => {
+        .then((res) => {
           if (this.success == true) {
             return this.$message.error('删除用户失败')
           }
@@ -367,11 +424,11 @@ export default {
         newsTitle: this.editForm.newsTitle,
         newsContent: this.editForm.newsContent,
         file: this.editForm.file,
-        newsScource:this.editForm.newsScource,
-        newsType:this.editForm.newsType
+        newsScource: this.editForm.newsScource,
+        newsType: this.editForm.newsType,
       }
       let vm = this
-      this.$refs[formName].validate(valid => {
+      this.$refs[formName].validate((valid) => {
         if (valid) {
           vm.$refs.upload.submit()
           this.$message.success('编辑成功')
@@ -381,7 +438,7 @@ export default {
           return false
         }
       })
-    }
+    },
   },
   filters: {
     newsScource(value) {
@@ -404,9 +461,11 @@ export default {
         return '校园动态'
       } else if (value === 4) {
         return '通知动态'
+      } else if (value === 5) {
+        return '实时动态2'
       }
-    }
-  }
+    },
+  },
 }
 </script>
 <style scopd>
@@ -429,10 +488,9 @@ export default {
   text-overflow: ellipsis;
   white-space: nowrap;
   display: -webkit-inline-box;
- 
 }
-.newsContent img{
-    display: none;
+.newsContent img {
+  display: none;
 }
 .el-table--enable-row-transition .el-table__body td {
   text-align: center;

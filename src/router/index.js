@@ -1,3 +1,11 @@
+/*
+ * @Descripttion: 
+ * @version: 
+ * @Author: sueRimn
+ * @Date: 2020-06-22 19:40:26
+ * @LastEditors: sueRimn
+ * @LastEditTime: 2020-08-15 09:58:51
+ */
 import Vue from "vue";
 import Router from "vue-router";
 
@@ -10,6 +18,7 @@ import Login from "../components/Login.vue"
 import Banner from "../page/banner/index.vue"
 import Letter from "../page/letter/index.vue"
 import Course from "../page/course/index.vue"
+import Column from "../page/column/index.vue"
 
 
 Vue.use(Router);
@@ -60,6 +69,11 @@ const router = new Router({
       path: '/sign',
       name: "Sign",
       component: Sign
+    },
+    {
+      path: '/column',
+      name: "Column",
+      component: Column
     }
   ]
 });

@@ -39,6 +39,9 @@
               <router-link to="/banner">
                 <div><span>轮播图</span></div>
               </router-link>
+              <router-link to="/column">
+                <div><span>栏目seo</span></div>
+              </router-link>
             </div>
           </el-col>
           <el-col :span="4">
@@ -72,12 +75,12 @@ export default {
       this.$confirm('请确认退出？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        type: 'warning'
+        type: 'warning',
       })
         .then(() => {
           this.$message({
             type: 'success',
-            message: '退出成功'
+            message: '退出成功',
           })
           // 确认退出，清除token
           localStorage.removeItem('token')
@@ -87,11 +90,11 @@ export default {
         .catch(() => {
           this.$message({
             type: 'info',
-            message: '已取消退出'
+            message: '已取消退出',
           })
         })
-    }
-  }
+    },
+  },
 }
 </script>
 <style scopd>

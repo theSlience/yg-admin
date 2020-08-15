@@ -4,7 +4,7 @@
  * @Author: sueRimn
  * @Date: 2020-05-12 09:16:42
  * @LastEditors: sueRimn
- * @LastEditTime: 2020-08-03 09:38:20
+ * @LastEditTime: 2020-08-11 08:36:38
  -->
 <template>
   <div>
@@ -72,7 +72,7 @@ export default {
       page: {
         pageNum: 1,
         total: 0,
-        pageSize: 10,
+        pageSize: 8,
       },
     }
   },
