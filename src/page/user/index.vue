@@ -4,7 +4,7 @@
  * @Author: sueRimn
  * @Date: 2020-05-12 09:16:42
  * @LastEditors: sueRimn
- * @LastEditTime: 2020-08-11 08:36:38
+ * @LastEditTime: 2020-08-17 09:07:39
  -->
 <template>
   <div>
@@ -89,7 +89,7 @@ export default {
       this.$axios
         .get('/api1/send/getAllSend/' + this.page.pageNum)
         .then((res) => {
-          if (res.data.uAuth === 'true') {
+          if (res.data.code === 401) {
             this.$message.error('您已退出登陆，请重新登陆')
             return this.$router.push('/login')
           }

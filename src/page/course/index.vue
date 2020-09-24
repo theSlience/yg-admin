@@ -4,7 +4,7 @@
  * @Author: sueRimn
  * @Date: 2020-05-12 09:16:42
  * @LastEditors: sueRimn
- * @LastEditTime: 2020-08-03 11:14:44
+ * @LastEditTime: 2020-09-24 17:27:45
  -->
 <template>
   <div class="ct">
@@ -15,7 +15,7 @@
           <el-col :span="16">
             <el-button @click="opendialogVisible()"
                        icon="el-icon-plus">
-              添加课程
+              添加课程简章
             </el-button>
             <!--
             <el-button :span="8">批量删除</el-button>
@@ -165,7 +165,7 @@
                          ref="upload"
                          :action="uploadUrl"
                          :auto-upload="false"
-                         :limit="4"
+                         :limit="5"
                          multiple
                          :on-success="handleAvatarUpload"
                          :file-list="fileList"
@@ -264,7 +264,7 @@
                          ref="upload"
                          :action="editUrl"
                          :auto-upload="false"
-                         :limit="4"
+                         :limit="5"
                          multiple
                          :on-success="handleAvatarUpload"
                          :file-list="fileList"
@@ -353,14 +353,17 @@ export default {
       zsjzTypeOptions: [
         { zsjzType: 1, Text: '护理专业' },
         { zsjzType: 2, Text: '幼儿教育' },
-        { zsjzType: 3, Text: '计算机应用' },
-        { zsjzType: 4, Text: '高铁专业' },
-        { zsjzType: 5, Text: '航空服务' },
-        { zsjzType: 6, Text: '会计' },
-        { zsjzType: 7, Text: '汽车维修' },
-        { zsjzType: 8, Text: '电子商务' },
-        { zsjzType: 9, Text: '电气自动化' },
-        { zsjzType: 10, Text: '数控加工' },
+        // { zsjzType: 3, Text: '剑桥英语' },
+        { zsjzType: 3, Text: '高铁专业' },
+        { zsjzType: 4, Text: '计算机应用' },
+        { zsjzType: 5, Text: '平面设计' },
+        { zsjzType: 6, Text: '航空服务' },
+        { zsjzType: 7, Text: '会计' },
+        { zsjzType: 8, Text: '汽车维修' },
+        { zsjzType: 9, Text: '电子商务' },
+        { zsjzType: 10, Text: '电气自动化' },
+        { zsjzType: 11, Text: '数控加工' },
+        { zsjzType: 12, Text: '无人机应用' },
       ],
       // 分页数据
       page: {
@@ -389,7 +392,7 @@ export default {
       this.$axios
         .get('/api1/zsjz/getAllZsjz/' + this.page.pageNum)
         .then((res) => {
-          if (res.data.uAuth === 'true') {
+          if (res.data.code === 401) {
             this.$message.error('您已退出登陆，请重新登陆')
             return this.$router.push('/login')
           }
@@ -424,9 +427,9 @@ export default {
       this.imgUrl = URL.createObjectURL(file.raw)
     },
     beforeAvatarUpload(file) {
-      const isLt4M = file.size / 1024 / 1024 < 4
+      const isLt4M = file.size / 10240 / 10240 < 10
       if (!isLt4M) {
-        this.$message.error('上传新闻图片大小不能超过 4MB!')
+        this.$message.error('上传新闻图片大小不能超过 10MB!')
       }
       return isLt4M
     },
@@ -496,22 +499,30 @@ export default {
         return '护理专业'
       } else if (value === 2) {
         return '幼儿教育'
-      } else if (value === 3) {
-        return '计算机应用'
-      } else if (value === 4) {
+      }
+    //    else if (value === 3) {
+    //     return '剑桥英语'
+    //   }
+       else if (value === 3) {
         return '高铁专业'
+      } else if (value === 4) {
+        return '计算机应用'
       } else if (value === 5) {
-        return '航空服务'
+        return '平面设计'
       } else if (value === 6) {
-        return '会计'
+        return '航空服务'
       } else if (value === 7) {
-        return '汽车维修'
+        return '会计'
       } else if (value === 8) {
-        return '电子商务'
+        return '汽车维修'
       } else if (value === 9) {
-        return '电气自动化'
+        return '电子商务'
       } else if (value === 10) {
+        return '电气自动化'
+      } else if (value === 11) {
         return '数控加工'
+      } else if (value === 12) {
+        return '无人机应用'
       }
     },
   },

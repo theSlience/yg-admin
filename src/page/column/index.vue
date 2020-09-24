@@ -4,7 +4,7 @@
  * @Author: sueRimn
  * @Date: 2020-05-12 09:16:42
  * @LastEditors: sueRimn
- * @LastEditTime: 2020-08-15 15:03:05
+ * @LastEditTime: 2020-08-17 09:10:37
  -->
 <template>
   <div>
@@ -224,11 +224,11 @@ export default {
       this.$axios
         .get('/api1/seo/selectSeo/' + this.page.pageNum)
         .then((res) => {
-          if (res.data.uAuth === 'true') {
+            console.log(res)
+          if (res.data.code === 401) {
             this.$message.error('您已退出登陆，请重新登陆')
             return this.$router.push('/login')
           }
-          console.log(res)
           this.news = res.data.data.list
           this.page.total = res.data.data.total
         })

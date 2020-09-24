@@ -4,7 +4,7 @@
  * @Author: sueRimn
  * @Date: 2020-06-22 19:20:23
  * @LastEditors: sueRimn
- * @LastEditTime: 2020-08-15 09:14:47
+ * @LastEditTime: 2020-08-17 09:13:05
  */
 "use strict";
 // Template version: 1.3.1
@@ -23,7 +23,8 @@ module.exports = {
     proxyTable: {
       "/api1/": {
         // 调用的接口域名和端口号
-        target: "http://192.168.1.117:8012",
+        // target: "http://192.168.1.117:8012",
+        target: "http://47.114.189.204:8012",
         // 表示实现跨域
         changeOrigin: true,
         pathRewrite: {
@@ -34,9 +35,9 @@ module.exports = {
     },
 
     // Various Dev Server settings
-    // host: "127.0.0.1", // can be overwritten by process.env.HOST
-    host: "192.168.1.122", // can be overwritten by process.env.HOST
-    port: 8080, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
+    host: "127.0.0.1", // can be overwritten by process.env.HOST
+    // host: "192.168.1.122", // can be overwritten by process.env.HOST
+    port: 8081, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
     autoOpenBrowser: true,
     errorOverlay: true,
     notifyOnErrors: true,

@@ -343,7 +343,7 @@ export default {
       this.$axios
         .get('/api1/news/getAllNews/' + this.page.pageNum)
         .then((res) => {
-          if (res.data.uAuth === 'true') {
+          if (res.data.code === 401) {
             this.$message.error('您已退出登陆，请重新登陆')
             return this.$router.push('/login')
           }
